@@ -1,0 +1,178 @@
+@page
+@model LostLink.Pages.DetailsModel
+@{
+    ViewData["Title"] = Model.Found is not null ? "Found item" : "Lost item";
+}
+
+@if (Model.Found is not null)
+{
+    var f = Model.Found;
+
+    <h1 class="h3 mb-3"><span class="badge bg-lostlink">Found</span> @f.Summary()</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Category</dt>
+                <dd class="col-sm-9">@f.Category @(string.IsNullOrWhiteSpace(f.Brand) ? "" : "· " + f.Brand)</dd>
+                <dt class="col-sm-3">Colour</dt>
+                <dd class="col-sm-9">@f.Colour</dd>
+                <dt class="col-sm-3">Found at</dt>
+                <dd class="col-sm-9">@f.Location, on @f.DateFound.ToString("dd MMM yyyy")</dd>
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9"><span class="badge bg-secondary">@f.Status</span></dd>
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">@f.Description</dd>
+            </dl>
+        </div>
+    </div>
+
+    @if (Model.Matches.Count > 0)
+    {
+        <h2 class="h5">Possible owners on file</h2>
+        <p class="text-muted small">Scored by the matching engine - click a row to open the lost report.</p>
+        @foreach (var m in Model.Matches)
+        {
+            <div class="card mb-2 border-@(m.Level == MatchLevel.High ? "success" : "warning")">
+                <div class="card-body py-2 d-flex justify-content-between align-items-center gap-2">
+                    <div>
+                        <strong>@m.Score/100</strong>
+                        <span class="badge ms-1 @(m.Level == MatchLevel.High ? "badge-high" : "badge-medium")">@m.Level</span>
+                        <div class="small">@m.Lost.Summary()</div>
+                        <ul class="small text-muted mb-0 mt-1">
+                            @foreach (var reason in m.Reasons)
+                            {
+                                <li>@reason</li>
+                            }
+                        </ul>
+                    </div>
+                    <a asp-page="/Details" asp-route-kind="lost" asp-route-id="@m.Lost.Id"
+                       class="btn btn-sm btn-lostlink flex-shrink-0">Open</a>
+                </div>
+            </div>
+        }
+    }
+
+    @if (Model.ClaimApproved)
+    {
+        <div class="card border-success mt-3">
+            <div class="card-header bg-success text-white fw-bold">Reunion approved</div>
+            <div class="card-body">
+                <p class="mb-3 text-muted small">
+                    The claim was verified. Contact details and the pickup point are now visible.
+                </p>
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Owner (claimant)</dt>
+                    <dd class="col-sm-9">@Model.ApprovedClaim!.ClaimantName · @Model.ApprovedClaim.ClaimantEmail</dd>
+                    <dt class="col-sm-3">Finder</dt>
+                    <dd class="col-sm-9">@f.FinderName · @f.ContactEmail</dd>
+                    <dt class="col-sm-3">Pickup point</dt>
+                    <dd class="col-sm-9">@f.PickupPoint</dd>
+                </dl>
+            </div>
+        </div>
+    }
+    else if (f.CanAcceptClaims())
+    {
+        <form method="post" asp-page="Details" asp-route-id="@f.Id" asp-route-kind="found"
+              asp-handler="Claim" class="card card-body bg-light mt-3"
+              data-confirm="Submit this claim? Make sure your answer is exact.">
+            <h2 class="h6">Is this yours? Answer to claim it</h2>
+            <p class="fw-bold">@f.SecretQuestion</p>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="ClaimInput.ClaimantName" class="form-label"></label>
+                <input asp-for="ClaimInput.ClaimantName" class="form-control" />
+                <span asp-validation-for="ClaimInput.ClaimantName" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ClaimInput.ClaimantEmail" class="form-label"></label>
+                <input asp-for="ClaimInput.ClaimantEmail" class="form-control" />
+                <span asp-validation-for="ClaimInput.ClaimantEmail" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ClaimInput.AnswerGiven" class="form-label"></label>
+                <input asp-for="ClaimInput.AnswerGiven" class="form-control" />
+                <span asp-validation-for="ClaimInput.AnswerGiven" class="text-danger small"></span>
+            </div>
+            <button class="btn btn-lostlink">Submit claim</button>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-info mt-3 mb-0">
+            This item is no longer accepting claims.
+        </div>
+    }
+}
+else if (Model.Lost is not null)
+{
+    var l = Model.Lost;
+
+    <h1 class="h3 mb-3"><span class="badge bg-danger">Lost</span> @l.Summary()</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Category</dt>
+                <dd class="col-sm-9">@l.Category @(string.IsNullOrWhiteSpace(l.Brand) ? "" : "· " + l.Brand)</dd>
+                <dt class="col-sm-3">Colour</dt>
+                <dd class="col-sm-9">@l.Colour</dd>
+                <dt class="col-sm-3">Lost at</dt>
+                <dd class="col-sm-9">@l.Location, on @l.DateLost.ToString("dd MMM yyyy")</dd>
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9"><span class="badge bg-secondary">@l.Status</span></dd>
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">@l.Description</dd>
+                @if (l.EstimatedValueOmr is int v)
+                {
+                    <dt class="col-sm-3">Estimated value</dt>
+                    <dd class="col-sm-9">@v OMR</dd>
+                }
+            </dl>
+        </div>
+    </div>
+
+    @if (Model.Matches.Count > 0)
+    {
+        <h2 class="h5">Possible finds in the system</h2>
+        <p class="text-muted small">
+            Scored by the matching engine - claim from the found item's own page.
+        </p>
+        @foreach (var m in Model.Matches)
+        {
+            <div class="card mb-2 border-@(m.Level == MatchLevel.High ? "success" : "warning")">
+                <div class="card-body py-2 d-flex justify-content-between align-items-center gap-2">
+                    <div>
+                        <strong>@m.Score/100</strong>
+                        <span class="badge ms-1 @(m.Level == MatchLevel.High ? "badge-high" : "badge-medium")">@m.Level</span>
+                        <div class="small">@m.Found.Summary()</div>
+                        <ul class="small text-muted mb-0 mt-1">
+                            @foreach (var reason in m.Reasons)
+                            {
+                                <li>@reason</li>
+                            }
+                        </ul>
+                    </div>
+                    <a asp-page="/Details" asp-route-kind="found" asp-route-id="@m.Found.Id"
+                       class="btn btn-sm btn-lostlink flex-shrink-0">Open</a>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info mb-0">
+            Nothing matches this report yet. LostLink keeps scoring every new found item
+            against it automatically.
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-warning">Report not found.</div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

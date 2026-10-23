@@ -1,0 +1,80 @@
+@page
+@model LostLink.Pages.ReportLostModel
+@{ ViewData["Title"] = "Report a Lost Item"; }
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <h1 class="h3 mb-3"><span class="badge bg-lostlink">Lost</span> I lost something</h1>
+
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Lost.OwnerName" class="form-label"></label>
+                    <input asp-for="Lost.OwnerName" class="form-control" />
+                    <span asp-validation-for="Lost.OwnerName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Lost.ContactEmail" class="form-label"></label>
+                    <input asp-for="Lost.ContactEmail" class="form-control"
+                           placeholder="you@university.edu.om" />
+                    <span asp-validation-for="Lost.ContactEmail" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Lost.Category" class="form-label"></label>
+                    <select asp-for="Lost.Category"
+                            asp-items="Html.GetEnumSelectList<ItemCategory>()"
+                            class="form-select"></select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Lost.Colour" class="form-label"></label>
+                    <input asp-for="Lost.Colour" class="form-control" />
+                    <span asp-validation-for="Lost.Colour" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Lost.Brand" class="form-label"></label>
+                    <input asp-for="Lost.Brand" class="form-control" placeholder="optional" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Lost.Location" class="form-label"></label>
+                    <input asp-for="Lost.Location" class="form-control"
+                           placeholder="e.g. Main Library, 2nd floor" />
+                    <span asp-validation-for="Lost.Location" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Lost.DateLost" class="form-label"></label>
+                    <input asp-for="Lost.DateLost" class="form-control" />
+                    <span asp-validation-for="Lost.DateLost" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Lost.EstimatedValueOmr" class="form-label"></label>
+                    <input asp-for="Lost.EstimatedValueOmr" class="form-control" />
+                    <span asp-validation-for="Lost.EstimatedValueOmr" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Lost.Description" class="form-label"></label>
+                <textarea asp-for="Lost.Description" class="form-control" rows="3"
+                          data-counter="#descCounter"></textarea>
+                <div class="d-flex justify-content-between">
+                    <span asp-validation-for="Lost.Description" class="text-danger small"></span>
+                    <small id="descCounter" class="text-muted"></small>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-lostlink px-4">File lost report</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

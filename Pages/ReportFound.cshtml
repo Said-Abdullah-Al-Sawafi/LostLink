@@ -1,0 +1,112 @@
+@page
+@model LostLink.Pages.ReportFoundModel
+@{ ViewData["Title"] = "Report a Found Item"; }
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <h1 class="h3 mb-3"><span class="badge bg-lostlink">Found</span> I found something</h1>
+
+        <form method="post" data-preview="true">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Found.FinderName" class="form-label"></label>
+                    <input asp-for="Found.FinderName" class="form-control" />
+                    <span asp-validation-for="Found.FinderName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Found.ContactEmail" class="form-label"></label>
+                    <input asp-for="Found.ContactEmail" class="form-control"
+                           placeholder="you@university.edu.om" />
+                    <span asp-validation-for="Found.ContactEmail" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Found.Category" class="form-label"></label>
+                    <select asp-for="Found.Category"
+                            asp-items="Html.GetEnumSelectList<ItemCategory>()"
+                            class="form-select"></select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Found.Colour" class="form-label"></label>
+                    <input asp-for="Found.Colour" class="form-control" />
+                    <span asp-validation-for="Found.Colour" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Found.Brand" class="form-label"></label>
+                    <input asp-for="Found.Brand" class="form-control" placeholder="optional" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-7 mb-3">
+                    <label asp-for="Found.Location" class="form-label"></label>
+                    <input asp-for="Found.Location" class="form-control"
+                           placeholder="e.g. Main Library, front desk" />
+                    <span asp-validation-for="Found.Location" class="text-danger small"></span>
+                </div>
+                <div class="col-md-5 mb-3">
+                    <label asp-for="Found.DateFound" class="form-label"></label>
+                    <input asp-for="Found.DateFound" class="form-control" />
+                    <span asp-validation-for="Found.DateFound" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Found.Description" class="form-label"></label>
+                <textarea asp-for="Found.Description" class="form-control" rows="3"
+                          data-counter="#descCounter"></textarea>
+                <div class="d-flex justify-content-between">
+                    <span asp-validation-for="Found.Description" class="text-danger small"></span>
+                    <small id="descCounter" class="text-muted"></small>
+                </div>
+            </div>
+
+            <h2 class="h6 mt-4 text-uppercase text-muted">Verification</h2>
+            <p class="text-muted small">
+                Only the real owner can answer this. It is checked before anyone
+                gets the contact details.
+            </p>
+            <div class="mb-3">
+                <label asp-for="Found.SecretQuestion" class="form-label"></label>
+                <input asp-for="Found.SecretQuestion" class="form-control"
+                       placeholder="e.g. What is the lock-screen wallpaper?" />
+                <span asp-validation-for="Found.SecretQuestion" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Found.SecretAnswer" class="form-label"></label>
+                <input asp-for="Found.SecretAnswer" class="form-control" />
+                <span asp-validation-for="Found.SecretAnswer" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Found.PickupPoint" class="form-label"></label>
+                <input asp-for="Found.PickupPoint" class="form-control"
+                       placeholder="e.g. Security Office, Building 12, 8am-3pm" />
+            </div>
+
+            <button type="submit" class="btn btn-lostlink px-4">Register found item</button>
+        </form>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card shadow-sm position-sticky" style="top: 1rem;">
+            <div class="card-header bg-lostlink text-white fw-bold">
+                Live match preview <span class="badge bg-light text-dark ms-1">AJAX</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small">
+                    As you fill the form, LostLink compares it with every lost report
+                    and shows the strongest matches here.
+                </p>
+                <div id="matchPreview"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

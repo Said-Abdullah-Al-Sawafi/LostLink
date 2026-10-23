@@ -1,0 +1,65 @@
+@page
+@model ClaimsModel
+@{ ViewData["Title"] = "Claims desk"; }
+
+<h1 class="h3 mb-1">Claims verification desk</h1>
+<p class="text-muted">
+    Compare the expected answer with the one given, use the overlap badge as a
+    pre-check, then decide.
+</p>
+
+@if (Model.Pending.Count == 0)
+{
+    <div class="alert alert-info mb-0">No pending claims right now.</div>
+}
+else
+{
+    <table class="table table-hover table-lostlink align-middle">
+        <thead>
+            <tr>
+                <th>Claimed item</th>
+                <th>Claimant</th>
+                <th>Expected answer</th>
+                <th>Answer given</th>
+                <th>Overlap</th>
+                <th class="text-end">Decision</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in Model.Pending)
+            {
+                var found = Model.FoundByClaim[claim.Id];
+                var overlap = claim.AnswerOverlap(found);
+                <tr>
+                    <td>
+                        <a asp-page="/Details" asp-route-kind="found" asp-route-id="@found.Id">
+                            @found.Summary()
+                        </a>
+                        <div class="small text-muted">Secret question: @found.SecretQuestion</div>
+                    </td>
+                    <td>
+                        @claim.ClaimantName
+                        <div class="small text-muted">@claim.ClaimantEmail</div>
+                    </td>
+                    <td class="fw-bold text-success">@found.SecretAnswer</td>
+                    <td class="fw-bold text-danger">@claim.AnswerGiven</td>
+                    <td>
+                        <span class="badge @(overlap >= 60 ? "badge-high" : overlap >= 30 ? "badge-medium" : "bg-danger")">
+                            @overlap%
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <form method="post" asp-page-handler="Approve" asp-route-id="@claim.Id"
+                              class="d-inline" data-decision="approve">
+                            <button class="btn btn-success btn-sm">Approve</button>
+                        </form>
+                        <form method="post" asp-page-handler="Reject" asp-route-id="@claim.Id"
+                              class="d-inline" data-decision="reject">
+                            <button class="btn btn-outline-danger btn-sm">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

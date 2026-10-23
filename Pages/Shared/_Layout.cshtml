@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LostLink</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-lostlink">
+        <div class="container">
+            <a class="navbar-brand fw-bold" asp-page="/Index">LostLink</a>
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#mainMenu"
+                    aria-controls="mainMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/ReportLost">Report Lost</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/ReportFound">Report Found</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Browse">Browse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/MatchCentre">Match Centre</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-page="/Claims">Claims</a>
+                    </li>
+                </ul>
+                <span class="navbar-text text-white-50 small">
+                    @Repository.LostItems.Count lost ·
+                    @Repository.FoundItems.Count found
+                </span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="container py-4">
+    @if (TempData["Success"] is string ok)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @ok
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] is string err)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @err
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @RenderBody()
+</div>
+
+<footer class="border-top footer text-muted small">
+    <div class="container py-3">
+        COMP4701 · LostLink - connecting lost items with their finders · Fall 2026
+    </div>
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

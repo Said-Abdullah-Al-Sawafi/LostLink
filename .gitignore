@@ -1,0 +1,17 @@
+## .NET build artifacts
+bin/
+obj/
+
+## IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+## OS
+.DS_Store
+Thumbs.db
+
+## local tool state
+.mimosa/

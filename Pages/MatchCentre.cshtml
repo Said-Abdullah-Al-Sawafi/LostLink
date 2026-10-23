@@ -1,0 +1,60 @@
+@page
+@model MatchCentreModel
+@{ ViewData["Title"] = "Match Centre"; }
+
+<h1 class="h3 mb-1">Match Centre</h1>
+<p class="text-muted">
+    @Model.Pairs.Count(m => m.Level == MatchLevel.High) high-potential pairs waiting for a claim.
+    Click any row to expand the scoring reasons.
+</p>
+
+@if (Model.Pairs.Count == 0)
+{
+    <div class="alert alert-info">No matches above 50 yet. New reports are scored automatically.</div>
+}
+else
+{
+    <table class="table table-hover table-lostlink align-middle">
+        <thead>
+            <tr>
+                <th>Lost report</th>
+                <th>Found report</th>
+                <th>Score</th>
+                <th>Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model.Pairs)
+            {
+                <tr data-reasons style="cursor:pointer" title="Click to see the scoring reasons">
+                    <td>
+                        <a asp-page="/Details" asp-route-kind="lost" asp-route-id="@m.Lost.Id">
+                            @m.Lost.Summary()
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-page="/Details" asp-route-kind="found" asp-route-id="@m.Found.Id">
+                            @m.Found.Summary()
+                        </a>
+                    </td>
+                    <td><strong>@m.Score/100</strong></td>
+                    <td>
+                        <span class="badge @(m.Level == MatchLevel.High ? "badge-high" : "badge-medium")">
+                            @m.Level
+                        </span>
+                    </td>
+                </tr>
+                <tr class="reasons" style="display:none">
+                    <td colspan="4" class="bg-light">
+                        <ul class="small mb-0">
+                            @foreach (var reason in m.Reasons)
+                            {
+                                <li>@reason</li>
+                            }
+                        </ul>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

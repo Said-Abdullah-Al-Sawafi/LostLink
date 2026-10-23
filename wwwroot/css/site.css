@@ -1,0 +1,50 @@
+/* LostLink theme - a thin layer over Bootstrap 5 (library file untouched) */
+
+:root {
+    --ll-teal:  #0F766E;
+    --ll-dark:  #134E4A;
+    --ll-amber: #F59E0B;
+}
+
+body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: #1F2937;
+}
+
+/* navbar */
+.bg-lostlink {
+    background: linear-gradient(90deg, var(--ll-teal), var(--ll-dark));
+}
+.navbar-brand { letter-spacing: 0.5px; }
+
+/* buttons: pill shape, brand colour */
+.btn-lostlink {
+    background-color: var(--ll-teal);
+    border: 1px solid var(--ll-dark);
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.45rem 1.4rem;
+}
+.btn-lostlink:hover { background-color: var(--ll-dark); color: #fff; }
+
+/* forms: brand focus ring */
+.form-control:focus, .form-select:focus {
+    border-color: var(--ll-teal);
+    box-shadow: 0 0 0 0.2rem rgba(15, 118, 110, 0.25);
+}
+
+/* tables: soft header, hover rows */
+.table-lostlink thead {
+    background-color: #E6F4F1;
+    color: var(--ll-dark);
+}
+.table-lostlink tbody tr:hover { background-color: #F4FAF9; }
+
+/* match badges */
+.badge-high   { background-color: #16A34A; }
+.badge-medium { background-color: var(--ll-amber); }
+
+/* cards */
+.card { border-radius: 0.75rem; }
+.card-header { font-family: "Segoe UI Semibold", "Segoe UI", sans-serif; }
