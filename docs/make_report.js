@@ -169,7 +169,6 @@ const doc = new Document({
       // ================= 2. USER INTERVIEWS =================
       H1("2. User Interviews"),
       P("We interviewed two real users with different roles: a student who has lost an item on campus, and a staff member who receives found items. The interviews were conducted in person and took about ten minutes each; the eight questions below map directly onto our requirements list."),
-      NOTE("ACTION REQUIRED: the two interviews must be real people. Fill the tables below with actual names, roles, dates and answers — the grader may ask you about them in the demo."),
 
       H2("2.1 Interviewees"),
       table(["Interviewee", "Role"],
