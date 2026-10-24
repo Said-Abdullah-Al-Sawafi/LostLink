@@ -46,7 +46,7 @@
                        asp-route-id="@r.Id">@r.Summary</a>
                 </td>
                 <td>@r.Location</td>
-                <td>@r.Date:dd MMM yyyy</td>
+                <td>@r.Date.ToString("dd MMM yyyy")</td>
                 <td><span class="badge bg-secondary">@r.Status</span></td>
             </tr>
         }
