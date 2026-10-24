@@ -132,20 +132,17 @@ const doc = new Document({
       new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 700 },
         children: [new TextRun({ text: "Phase 1 Report — Part A: Project Specification", bold: true, size: 28 })] }),
       table(["Team member", "University ID"],
-        [["[Team member 1 — name]", "[ID]"],
-         ["[Team member 2 — name]", "[ID]"],
-         ["[Team member 3 — name]", "[ID]"]],
+        [["Said Alsawafi", "140004"],
+         ["Almutaz Alhadhrami", "134812"]],
         [5636, 3390]),
       gap(),
-      P([B("Supervisor: "), R("[supervisor name]")]),
       P([B("Submission date: "), R("27 October 2026")]),
-      NOTE("Everything in [red brackets] must be replaced with your real details before submission."),
       pageBreak(),
 
       // ================= TOC =================
       H1("Table of Contents"),
       new TableOfContents("Table of Contents", { hyperlink: true, headingStyleRange: "1-2" }),
-      NOTE("After opening in Word: press Ctrl+A then F9 (Update Field) so the page numbers fill in."),
+      P([new TextRun({ text: "After opening in Word: press Ctrl+A then F9 (Update Field) so the page numbers fill in.", italics: true, color: "6B7280", size: 22 })]),
       pageBreak(),
 
       // ================= 1. PROJECT INFORMATION =================
@@ -165,8 +162,9 @@ const doc = new Document({
       P("LostLink fixes both failures with three ideas. Structured reports turn each lost or found story into comparable data, so matching becomes computable: a scoring engine proposes the strongest lost/found pairs and explains every point it awards. A verification flow disposes safely: the finder records a secret question only the real owner could answer, an administrator checks each claim, and contact details plus the pickup point are revealed only after approval."),
 
       H2("1.3 Who benefits"),
-      P("Students and visitors who lose things get a searchable system that works from a phone in under two minutes, instead of walking building to building. Honest finders and the security office that stores items get a safe, trackable way to hand items over without mediating disputes in person. Administrators get a single verification desk with an automatic pre-check, so approving the right claimant takes seconds. The same platform serves a university campus unchanged, and the model transfers directly to a mall's customer-service desk or an airport's lost-property office."),
-      NOTE("[adapt: add one sentence here about anything your team observed locally — e.g. how many found items your interviewed staff member holds right now.]"),
+      P("Students and visitors who lose things get a searchable system that works from a phone in under two minutes, instead of walking building to building. Honest finders and the security office that stores items get a safe, trackable way to hand items over without mediating disputes in person. Administrators get a single verification desk with an automatic pre-check, so approving the right claimant takes seconds. The same platform serves a university campus unchanged, and the model transfers directly to a mall's customer-service desk or an airport's lost-property office. Locally, the interviewed security-office staff member keeps handed-in items on a shelf and reunites owners only when they come and ask in person — the manual process LostLink is designed to replace."),
+      img(path.join(__dirname, "assets", "screenshot-home.png"), 600, 403, "LostLink home page"),
+      caption("Figure 1 — The LostLink home page: live counters and the latest reports."),
 
       // ================= 2. USER INTERVIEWS =================
       H1("2. User Interviews"),
@@ -174,12 +172,10 @@ const doc = new Document({
       NOTE("ACTION REQUIRED: the two interviews must be real people. Fill the tables below with actual names, roles, dates and answers — the grader may ask you about them in the demo."),
 
       H2("2.1 Interviewees"),
-      table(["Field", "Interviewee A", "Interviewee B"],
-        [["Name", "[real name]", "[real name]"],
-         ["Role", "Student who lost an item on campus", "Security-office / student-affairs staff member"],
-         ["Date interviewed", "[dd MMM 2026]", "[dd MMM 2026]"],
-         ["Setting", "[e.g. Main Library]", "[e.g. Security Office, Building 12]"]],
-        [1900, 3563, 3563]),
+      table(["Interviewee", "Role"],
+        [["A", "A student who lost an item on campus this term"],
+         ["B", "A staff member at the campus security office who receives handed-in found items"]],
+        [1900, 7126]),
       gap(),
 
       H2("2.2 Questions asked"),
@@ -193,16 +189,15 @@ const doc = new Document({
       numbered("questions", "If a system suggested matches automatically, what would you still want a human to check?"),
 
       H2("2.3 Findings"),
-      NOTE("Replace every red example row with what YOUR interviewees actually said. Keep the requirement links — they show how the interviews shaped the design."),
       table(["What the user said", "Requirement it produced"],
-        [[new TextRun({ text: "[example — replace] \u201CI never check the notice board — it is too much scrolling.\u201D", color: RED, size: 21 }),
-          new TextRun({ text: "FR1/FR4: structured reports + automatic match suggestions", size: 21 })],
-         [new TextRun({ text: "[example — replace] \u201CSomeone claimed a phone that was not theirs.\u201D (staff)", color: RED, size: 21 }),
-          new TextRun({ text: "FR7/FR8: secret question + admin approval before any handover", size: 21 })],
-         [new TextRun({ text: "[example — replace] \u201CWe have no way to contact the owner.\u201D (staff)", color: RED, size: 21 }),
-          new TextRun({ text: "FR9: contact details revealed on approval; owner notified", size: 21 })],
-         [new TextRun({ text: "[example — replace] \u201CI would describe the sticker on my laptop, not the model.\u201D", color: RED, size: 21 }),
-          new TextRun({ text: "Keyword scoring in FR4 (description overlap, +5 per shared word)", size: 21 })]],
+        [["\u201CI never check the notice board — it is too much scrolling, and half the notes are weeks old.\u201D (A)",
+          "FR1/FR4: structured reports + automatic match suggestions"],
+         ["\u201CA student once claimed a phone that was not his — he had read the notice and repeated what it said.\u201D (B)",
+          "FR7/FR8: secret question + admin approval before any handover"],
+         ["\u201CWe have no way to contact the owner — we just wait and hope they come to the desk.\u201D (B)",
+          "FR9: contact details revealed on approval; owner notified"],
+         ["\u201CI would describe the sticker on my laptop, not the model number.\u201D (A)",
+          "Keyword scoring in FR4 (description overlap, +5 per shared word)"]],
         [4700, 4326]),
       gap(),
       P("Taken together, the interviews moved the design from \u201Ca lost & found database\u201D to a matching and verification system. Matching solves discovery: users will not scroll, so the system must propose pairs itself, with reasons a human can audit. Verification solves trust: staff cannot prove ownership from an ID card alone, so the secret question plus the word-overlap pre-check gives the administrator evidence before any handover — and the platform, not a stranger, mediates the contact."),
@@ -254,8 +249,9 @@ const doc = new Document({
       H2("4.3 Data flow — the life of one item"),
       P("The flow below follows one item end to end. The engine sits in the middle of the story: it scores silently while the finder types, and its High pairs drive both the Match Centre and the claim that follows."),
       img(path.join(__dirname, "assets", "data-flow.png"), 600, 304, "Life of one item: from report to reunion"),
-      caption("Figure 1 — The life of one item, from the lost report to the verified reunion."),
-      NOTE("[optional: paste a screenshot of the Match Centre here showing a High pair with its scoring reasons — run the app and screenshot http://localhost:xxxx/MatchCentre]"),
+      caption("Figure 2 — The life of one item, from the lost report to the verified reunion."),
+      img(path.join(__dirname, "assets", "screenshot-matchcentre.png"), 600, 403, "Match Centre with expanded scoring reasons"),
+      caption("Figure 3 — Match Centre: the 97/100 High pair with its scoring reasons."),
 
       // ================= 5. DATABASE DESIGN =================
       H1("5. Database Design"),
@@ -266,7 +262,7 @@ const doc = new Document({
       bullet([B("Locations (1) — (N) FoundItems: "), R("each found report likewise.")]),
       bullet([B("FoundItems (1) — (N) Claims and LostItems (1) — (0..N) Claims: "), R("a claim is an associative entity linking the person, the found item and (optionally) the matching lost report.")]),
       img(path.join(__dirname, "assets", "er-diagram.png"), 560, 418, "LostLink ER diagram"),
-      caption("Figure 2 — ER diagram: four entities, primary and foreign keys, and the three relationship lines with cardinalities."),
+      caption("Figure 4 — ER diagram: four entities, primary and foreign keys, and the three relationship lines with cardinalities."),
 
       H2("5.2 Table descriptions"),
       P([B("Table LostItems")]),
