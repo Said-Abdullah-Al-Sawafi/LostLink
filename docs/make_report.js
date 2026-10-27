@@ -4,7 +4,7 @@ const path = require("path");
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, ImageRun,
   AlignmentType, LevelFormat, TableOfContents, HeadingLevel, BorderStyle,
-  WidthType, ShadingType, PageBreak, Footer, PageNumber,
+  WidthType, ShadingType, PageBreak, Footer, PageNumber, ExternalHyperlink,
 } = require("docx");
 
 const TEAL = "0F766E", DARK = "134E4A", HEADFILL = "E6F4F1", RED = "C0392B";
@@ -130,7 +130,7 @@ const doc = new Document({
       new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 700 },
         children: [new TextRun({ text: "A Smart Lost & Found Matching and Verification Platform", size: 26, color: DARK })] }),
       new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 700 },
-        children: [new TextRun({ text: "Phase 1 Report — Part A: Project Specification", bold: true, size: 28 })] }),
+        children: [new TextRun({ text: "Phase 1 Report — Parts A, B & C", bold: true, size: 28 })] }),
       table(["Team member", "University ID"],
         [["Said Alsawafi", "140004"],
          ["Almutaz Alhadhrami", "134812"]],
@@ -319,11 +319,69 @@ const doc = new Document({
         [2600, 2100, 4326]),
       gap(),
       P([new TextRun({ text: "In Phase 1 these tables are implemented as in-memory collections of C# entity classes, as specified; the schema above is the design they will be migrated into.", italics: true })]),
+      pageBreak(),
+
+      // ================= PART B WALKTHROUGH =================
+      H1("Part B — Implementation Walkthrough"),
+      P("LostLink is a fully functional ASP.NET Core 8 web application (Razor Pages) integrated with jQuery and Bootstrap 5. This section walks through every implementation requirement of the Phase 1 sheet and states exactly where each feature lives in the code."),
+
+      H2("B6. Enumeration"),
+      P([B("Where it lives: "), R("Models/Enums.cs. Four enumerations are defined — ItemCategory (nine values), ItemStatus, MatchLevel and ClaimStatus — and ItemCategory is used consistently across the whole application: it fills the Report Lost and Report Found dropdowns via Html.GetEnumSelectList, the Browse category filter, the seed data, the matching engine's first comparison, and the badges on three pages. The status enums drive the item life-cycle (Active, Matched, Resolved, Withdrawn) and the claim work-flow (Pending, Approved, Rejected).")]),
+
+      H2("B7. C# classes"),
+      P([B("Where it lives: "), R("Models/LostItem.cs, Models/FoundItem.cs and Models/Claim.cs, supported by Models/TextHelpers.cs. Each class mirrors one designed database table and carries validation attributes, a parameterless constructor for form binding, a full constructor used by the seed data, and business-logic methods that live with the data — DaysSinceLost, Summary and IsStillFindable on LostItem; Summary and CanAcceptClaims on FoundItem; and AnswerOverlap, the word-overlap pre-check, on Claim.")]),
+
+      H2("B8. Front-end framework"),
+      P([B("Where it lives: "), R("wwwroot/js/site.js. Six distinct jQuery techniques are demonstrated: (1) a debounced AJAX live match preview on Report Found that serialises the form and renders the engine's JSON, (2) fade-in effects on the preview cards, (3) live text search plus category filtering on Browse with no page reloads, (4) a character counter bound to the description textareas, (5) click-to-expand scoring reasons in the Match Centre, and (6) a confirmation dialog before submitting a claim — plus animated statistic counters on the home page and a row highlight on the Claims desk.")]),
+      img(path.join(__dirname, "assets", "screenshot-livepreview.png"), 560, 439, "Report Found live match preview"),
+      caption("Figure 5 — Report Found: as the finder types, the AJAX live preview scores the draft against every lost report (94/100 High, with reasons) and a character counter tracks the description."),
+
+      H2("B9. Razor pages"),
+      P([B("Where it lives: "), R("Pages/Index.cshtml, ReportLost.cshtml, ReportFound.cshtml, Browse.cshtml, Details.cshtml, MatchCentre.cshtml and Claims.cshtml. Seven pages are all reachable from the navbar; each supports form-based input and output with text boxes, enum dropdowns, date pickers, textareas, number inputs, tables, badges and buttons, and every page reads and writes the C# class collections through its page model. The Details page serves both kinds of report via /Details?kind=lost|found&id=...")]),
+
+      H2("B10. Business logic"),
+      P([B("Where it lives: "), R("Models/MatchEngine.cs plus the claim approval flow in Claims.cshtml.cs. The engine scores every lost/found pair out of 100 — category 30, colour family 15, brand 15, location 15 (8 nearby), time window 10, shared keywords 15 — and returns a written reason for every awarded point; 75+ is High, 50-74 Medium. The Claims handlers apply the verification work-flow: approval reveals the contact details and pickup point and flips both item statuses to Matched.")]),
+
+      H2("B11. Custom layout"),
+      P([B("Where it lives: "), R("Pages/Shared/_Layout.cshtml. One shared layout renders the teal navbar with links to all seven pages and a live lost/found counter, TempData success/error alerts, and the footer on every page. Two named sections (Styles and Scripts) are defined and used: form pages fill Scripts with the validation partial, and the Details page fills Styles with page-scoped CSS.")]),
+
+      H2("B12. Error handling"),
+      P([B("Where it lives: "), R("try/catch blocks in every OnPost handler with a friendly ModelState fallback, NotFound() guards on the Details and Claims handlers for bad ids, a customised Pages/Error.cshtml that explains each status code, and app.UseStatusCodePagesWithReExecute(\"/Error\", \"?code={0}\") in Program.cs so 404/403 responses land on the styled page.")]),
+      img(path.join(__dirname, "assets", "screenshot-404.png"), 560, 394, "Styled 404 page"),
+      caption("Figure 6 — A missing item id renders the branded 404 page instead of a blank server error."),
+
+      H2("B13. Bootstrap styling"),
+      P([B("Where it lives: "), R("wwwroot/css/site.css — a theme layer appended over the untouched Bootstrap 5 library. It defines the LostLink palette as CSS variables (teal, dark teal, amber), the gradient navbar, pill-shaped brand buttons, brand focus rings on form controls, soft-header hover tables, and High/Medium match badge colours; the same classes style forms, buttons, tables and navigation on all pages, and the navbar collapses responsively on narrow windows.")]),
+
+      H2("B14. Form validation"),
+      P([B("Where it lives: "), R("DataAnnotations on all three entity classes plus the _ValidationScriptsPartial on every form page. Five validator types are applied — Required, StringLength (with MinimumLength), Range (0-5000 on the estimated value), EmailAddress, and DataType.Date — each rendering styled field messages; validation runs instantly on the client via jQuery unobtrusive validation and is re-checked server-side in every handler.")]),
+
+      // ================= PART C =================
+      pageBreak(),
+      H1("Part C — Collaboration and Submission"),
+
+      H2("C1. Teamwork"),
+      P("Tasks were distributed evenly between the two team members:"),
+      table(["Member", "Tasks", "Work %"],
+        [["Said Alsawafi (140004)",
+          "Part A sections 1-3 and user interviews; entity classes, enums, repository and matching engine; ReportLost and Browse pages; form validation pass; GitHub setup", "50%"],
+         ["Almutaz Alhadhrami (134812)",
+          "Shared layout and Bootstrap theme; Home, ReportFound with live preview, Details, MatchCentre and Claims pages; jQuery features and error handling; report sections 4-5; video editing", "50%"]],
+        [2360, 5366, 1300]),
+      gap(),
+
+      H2("C2. GitHub repository"),
+      P([R("The complete source code is publicly available at "), ]),
+      P([new ExternalHyperlink({
+        children: [new TextRun({ text: "github.com/Said-Abdullah-Al-Sawafi/lostlink-comp4701", style: "Hyperlink" })],
+        link: "https://github.com/Said-Abdullah-Al-Sawafi/lostlink-comp4701",
+      })]),
+      P("The repository contains the full solution (open LostLink.sln in Visual Studio 2022 and press F5), a README describing the stack and the rubric mapping, and this report in the docs folder. Every commit in the history documents the build step it delivered."),
     ],
   }],
 });
 
 Packer.toBuffer(doc).then((buf) => {
-  fs.writeFileSync(path.join(__dirname, "LostLink_PartA_Report.docx"), buf);
-  console.log("written", path.join(__dirname, "LostLink_PartA_Report.docx"));
+  fs.writeFileSync(path.join(__dirname, "LostLink_Phase1_Report.docx"), buf);
+  console.log("written", path.join(__dirname, "LostLink_Phase1_Report.docx"));
 });

@@ -15,3 +15,8 @@ Thumbs.db
 
 ## local tool state
 .mimosa/
+
+## MS Word lock files
+~$*
+
+docs/LostLink_PartA_Report.docx
