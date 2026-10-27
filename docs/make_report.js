@@ -373,8 +373,8 @@ const doc = new Document({
       H2("C2. GitHub repository"),
       P([R("The complete source code is publicly available at "), ]),
       P([new ExternalHyperlink({
-        children: [new TextRun({ text: "github.com/Said-Abdullah-Al-Sawafi/lostlink-comp4701", style: "Hyperlink" })],
-        link: "https://github.com/Said-Abdullah-Al-Sawafi/lostlink-comp4701",
+        children: [new TextRun({ text: "github.com/Said-Abdullah-Al-Sawafi/LostLink", style: "Hyperlink" })],
+        link: "https://github.com/Said-Abdullah-Al-Sawafi/LostLink",
       })]),
       P("The repository contains the full solution (open LostLink.sln in Visual Studio 2022 and press F5), a README describing the stack and the rubric mapping, and this report in the docs folder. Every commit in the history documents the build step it delivered."),
     ],
